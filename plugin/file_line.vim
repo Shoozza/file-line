@@ -16,10 +16,19 @@ let g:loaded_file_line = 1
 " * code.cc:10:
 let s:regexpressions = [ '\(.\{-1,}\)[(:]\(\d\+\)\%(:\(\d\+\):\?\)\?' ]
 
+
+" workaround when first opening file in fresh vim instance on windows
+let g:file_line_col = 0
+if has('win32') || has('win64')
+  autocmd VimEnter * call timer_start(0, { tid -> execute("normal! " . g:file_line_col . "|")})
+endif
+
 function! s:reopenAndGotoLine(file_name, line_num, col_num)
 	if !filereadable(a:file_name)
 		return
 	endif
+
+	let g:file_line_col = a:col_num
 
 	let l:bufn = bufnr("%")
 
